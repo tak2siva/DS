@@ -18,23 +18,21 @@ res = ""
 
 infix = "a+b*(c^d-e)^(f+g*h)-i".gsub ' ',''
 
-infix.each_char{ |c|
-	#debugger
-	if ['+','-','*','/','^'].include?(c)
-		if prec(c) >= prec(stack[-1])
-			stack.push c 
+infix.each_char {|c|
+	case c
+	when '+','-','*','/','^'
+		if stack[-1]=='(' || ( prec(c) >= prec(stack[-1]) )
+			stack.push c
 		else
-			while !stack.empty?
-				res += stack.pop				
+			while (!stack.empty? && stack[-1]!='(') do
+				res += stack.pop
 			end
 			stack.push c
-		end
-	elsif c=='(' 
-		next
+		end		
+	when '('
 		stack.push c
-	elsif c == ')'
-		next
-		while (!stack.empty? && stack[-1]!='(')
+	when ')'
+		while (!stack.empty? && stack[-1]!='(') do
 			res += stack.pop
 		end
 		stack.pop
@@ -43,8 +41,8 @@ infix.each_char{ |c|
 	end
 }
 
-while !stack.empty?
-	res += stack.pop				
+while (!stack.empty? && stack[-1]!='(') do
+	res += stack.pop
 end
 
 puts res
